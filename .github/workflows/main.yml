@@ -8,23 +8,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download project
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract project
+      - name: List repository
         run: |
-          unzip Gizemli_Macera_ANDROID_HAZIR.zip -d project
-          find project -maxdepth 2 -type f
-
-      - name: Build APK
-        working-directory: project
-        run: |
-          cd "$(find . -name buildozer.spec -printf '%h\n' | head -1)"
-          pip3 install --user buildozer cython
-          buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Gizemli-Macera-APK
-          path: project/**/bin/*.apk
+          echo "=== DOSYALAR ==="
+          ls -la
+          echo "=== ZIP İÇERİĞİ ==="
+          unzip -l Gizemli_Macera_ANDROID_HAZIR.zip | head -40
