@@ -1,0 +1,31 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download project
+        uses: actions/checkout@v4
+
+      - name: Extract project
+        run: |
+          unzip Gizemli_Macera_ANDROID_HAZIR.zip -d project
+          ls -la project
+
+      - name: Build
+        working-directory: project
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install buildozer cython
+          buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gizemli-Macera-APK
+          path: project/bin/*.apk
