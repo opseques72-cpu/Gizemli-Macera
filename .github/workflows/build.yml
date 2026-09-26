@@ -1,0 +1,56 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract project
+        run: |
+          unzip Gizemli_Macera_ANDROID_HAZIR.zip -d project
+
+      - name: Fix buildozer.spec
+        run: |
+          SPEC=$(find project -name buildozer.spec | head -1)
+          cat > "$SPEC" <<'EOF'
+[app]
+title = Gizemli Macera
+package.name = gizemli_macera
+package.domain = org.gizemli
+source.dir = .
+source.include_exts = py,png,wav,json
+version = 1.0
+requirements = python3,kivy
+orientation = portrait
+fullscreen = 1
+android.api = 35
+android.minapi = 23
+android.archs = arm64-v8a, armeabi-v7a
+android.permissions = VIBRATE
+
+[buildozer]
+log_level = 2
+warn_on_root = 0
+EOF
+
+      - name: Install Buildozer
+        run: |
+          pip3 install --user buildozer cython
+
+      - name: Build APK
+        run: |
+          SPEC=$(find project -name buildozer.spec | head -1)
+          cd "$(dirname "$SPEC")"
+          buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gizemli-Macera-APK
+          path: project/**/bin/*.apk
