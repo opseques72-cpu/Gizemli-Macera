@@ -1,7 +1,5 @@
 [app]
 title = Gizemli Macera
-[app]
-# Gizemli Macera Android build
 package.name = gizemli_macera
 package.domain = org.gizemli
 source.dir = .
