@@ -14,18 +14,17 @@ jobs:
       - name: Extract project
         run: |
           unzip Gizemli_Macera_ANDROID_HAZIR.zip -d project
-          ls -la project
+          find project -maxdepth 2 -type f
 
-      - name: Build
+      - name: Build APK
         working-directory: project
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip3 install buildozer cython
+          cd "$(find . -name buildozer.spec -printf '%h\n' | head -1)"
+          pip3 install --user buildozer cython
           buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Gizemli-Macera-APK
-          path: project/bin/*.apk
+          path: project/**/bin/*.apk
