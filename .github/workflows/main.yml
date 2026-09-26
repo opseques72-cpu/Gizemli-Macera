@@ -11,9 +11,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: List repository
+      - name: Extract project
         run: |
-          echo "=== DOSYALAR ==="
-          ls -la
-          echo "=== ZIP İÇERİĞİ ==="
-          unzip -l Gizemli_Macera_ANDROID_HAZIR.zip | head -40
+          unzip Gizemli_Macera_ANDROID_HAZIR.zip -d project
+          find project -type f
+
+      - name: Install Buildozer
+        run: |
+          pip3 install --user buildozer cython
+
+      - name: Build APK
+        run: |
+          SPEC=$(find project -name buildozer.spec | head -1)
+          DIR=$(dirname "$SPEC")
+          cd "$DIR"
+          buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gizemli-Macera-APK
+          path: project/**/bin/*.apk
